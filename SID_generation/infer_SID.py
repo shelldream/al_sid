@@ -14,14 +14,15 @@ from rqvae_embed.rqvae_clip import RQVAE_EMBED_CLIP
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- 全局常量和配置 ---
-CKPT_PATH = 'output_model/checkpoint-7.pth'  # todo
-INPUT_FILE_PATH = './item_feature/final/part_01.csv'  # todo
-OUTPUT_FILE_PATH = 'inference_results_batch.csv'  # todo
+EXPECTED_EMBEDDING_DIM = 512
 CHUNK_SIZE = 5000  # pandas每次读取的行数
 BATCH_SIZE = 128  # 模型批次推理的样本数
-INPUT_EMBEDDING_COL = 'feature'  # 输入文件中embedding列的名称
-INPUT_ID_COL = 'item_id'  # 输入文件中ID列的名称
-EXPECTED_EMBEDDING_DIM = 512
+
+INPUT_EMBEDDING_COL = 'TODO'  # 输入文件中embedding列的名称，例如"feature"
+INPUT_ID_COL = 'TODO'  # 输入文件中ID列的名称，例如"base62_string"
+CKPT_PATH = 'output_model/checkpoint-7.pth'  # todo: 需要推理的ckpt
+INPUT_FILE_PATH = './item_feature/final/part_01.csv'  # todo: 输入的emb，可从https://huggingface.co/datasets/AL-GR/Item-EMB获取
+OUTPUT_FILE_PATH = 'inference_results_batch.csv'  # todo: 输出结果
 
 
 def build_model(ckpt_path: str) -> torch.nn.Module:
