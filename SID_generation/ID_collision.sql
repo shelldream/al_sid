@@ -15,6 +15,8 @@ LIFECYCLE 360
 
 -- ========================================--
 -- 1.当得到了新的模型，先进行对全局的推理，得到raw_data表，字段包括item_id和codebook_index
+-- 如果是运行了'infer_SID.py'的代码，输出结果的两个字段就是代表item_id和codebook_index
+-- 具体的数据会例如：['15615', '111,222,333']
 
 -- 2.进行初次防碰撞
 INSERT OVERWRITE TABLE item_codebook_info
