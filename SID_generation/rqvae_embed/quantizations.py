@@ -63,6 +63,7 @@ class VQEmbedding(nn.Embedding):
 
     def __init__(self, n_embed, embed_dim, ema=True, decay=0.99, restart_unused_codes=True, eps=1e-5,
                  distance_type='l2'):
+        # 码本大小：创建 n_embed + 1 个嵌入，其中最后一个作为 padding index
         super().__init__(n_embed + 1, embed_dim, padding_idx=n_embed)
 
         self.ema = ema
@@ -75,6 +76,7 @@ class VQEmbedding(nn.Embedding):
             _ = [p.requires_grad_(True) for p in self.parameters()]
 
             # padding index is not updated by EMA
+            # 通过 cluster_size_ema 跟踪每个码本的使用频率，当使用次数为零时重置
             self.register_buffer('cluster_size_ema', torch.zeros(n_embed))
             self.register_buffer('embed_ema', self.weight[:-1, :].detach().clone())
 
@@ -210,6 +212,7 @@ class VQEmbedding(nn.Embedding):
         self.cluster_size_ema.mul_(self.decay).add_(cluster_size, alpha=1 - self.decay)
         self.embed_ema.mul_(self.decay).add_(vectors_sum_per_cluster, alpha=1 - self.decay)
 
+        # 未使用码本重启 ：检测并重置长期未使用的码本，防止码本崩溃（codebook collapse）
         if self.restart_unused_codes:
             if n_vectors < n_embed:
                 vectors = self._tile_with_noise(vectors, n_embed)
@@ -226,6 +229,13 @@ class VQEmbedding(nn.Embedding):
 
     @torch.no_grad()
     def _update_embedding(self):
+        """
+        Update the cluster center embeddings.
+        更新码本：簇中心向量
+
+        Args:
+            None
+        """
 
         n_embed = self.weight.shape[0] - 1
         n = self.cluster_size_ema.sum()
